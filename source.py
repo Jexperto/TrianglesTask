@@ -47,7 +47,7 @@ def epsilon_equals(point1, point2):
 
 
 def check(event):
-    global trinumber
+    global trinumber, fp, sp
     coords = cv.coords(lines.__len__() - 1)
     this_line = LineSegment(Point(coords[0], coords[1]), Point(coords[2], coords[3]))
     has_collided = False
@@ -56,36 +56,37 @@ def check(event):
         if do_lines_intersect(line, this_line):
             intersection = get_line_intersection(line, this_line)
             if line == lines[0]:
+                print("fp = %d, %d" % (fp.x, fp.y))
+                print("sp = %d, %d" % (sp.x, sp.y))
                 # print("item = " + str(item))
-                if fp.x < intersection.x < sp.x:
-                    fp.x = intersection.x
-                    fp.y = intersection.y
-                    cv.coords(item, fp.x, fp.y, sp.x, sp.y)
-                if sp.x < intersection.x < fp.x:
-                    sp.x = intersection.x
-                    sp.y = intersection.y
-                    cv.coords(item, fp.x, fp.y, sp.x, sp.y)
+                if not is_point_right_of_line(line, fp):
+                    fp = intersection
+                if not is_point_right_of_line(line, sp):
+                    sp = intersection
+                cv.coords(item, fp.x, fp.y, sp.x, sp.y)
             elif line == lines[1]:
+                print("fp = %d, %d" % (fp.x, fp.y))
+                print("sp = %d, %d" % (sp.x, sp.y))
                 # print("item = " + str(item))
-                if fp.x > intersection.x > sp.x:
-                    fp.x = intersection.x
-                    fp.y = intersection.y
-                    cv.coords(item, fp.x, fp.y, sp.x, sp.y)
-                if sp.x > intersection.x > fp.x:
-                    sp.x = intersection.x
-                    sp.y = intersection.y
-                    cv.coords(item, fp.x, fp.y, sp.x, sp.y)
+                if is_point_right_of_line(line, fp):
+                    fp = intersection
+                if is_point_right_of_line(line, sp):
+                    sp = intersection
+                cv.coords(item, fp.x, fp.y, sp.x, sp.y)
             elif line == lines[2]:
+                print("fp = %d, %d" % (fp.x, fp.y))
+                print("sp = %d, %d" % (sp.x, sp.y))
+
                 # print("item = " + str(item))
                 if fp.y > intersection.y > sp.y:
                     fp.x = intersection.x
                     fp.y = intersection.y
                     cv.coords(item, fp.x, fp.y, sp.x, sp.y)
-                if sp.y > intersection.y > fp.y:
+                elif sp.y > intersection.y > fp.y:
                     sp.x = intersection.x
                     sp.y = intersection.y
                     cv.coords(item, fp.x, fp.y, sp.x, sp.y)
-            # print(intersection.x, intersection.y)
+            print(intersection.x, intersection.y)
             if not intersections.__contains__(intersection):
                 intersections.append(intersection)
             if has_collided and not epsilon_equals(intersection, first_collision):  # if its the first occurrence, we can't make a line segment

@@ -89,6 +89,9 @@ def get_line_intersection(a, b):
     # k1*x + b1 = k2*x + b2
     # (k1-k2)*x = k2 - k1
     # x = (k2 - k1)/(k1-k2)
+    if (a.first.x - a.second.x) == 0 or (b.first.x - b.second.x) == 0:
+        a.first.x += epsilon
+        b.first.x += epsilon
     k1 = (a.first.y - a.second.y) / (a.first.x - a.second.x)
     k2 = (b.first.y - b.second.y) / (b.first.x - b.second.x)
     b1 = a.first.y - k1 * a.first.x
