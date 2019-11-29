@@ -62,9 +62,7 @@ def line_segment_touches_or_crosses_line(a, b):
 def do_lines_intersect(a, b):
     box1 = a.get_bounding_box()
     box2 = b.get_bounding_box()
-    res = do_bounding_boxes_intersect(box1, box2) and line_segment_touches_or_crosses_line(a,
-                                                                                           b) and line_segment_touches_or_crosses_line(
-        b, a)
+    res = do_bounding_boxes_intersect(box1, box2) and line_segment_touches_or_crosses_line(a, b) and line_segment_touches_or_crosses_line(b, a)
     return res
 
 
