@@ -25,6 +25,13 @@ def paint(event):
     item = cv.create_line(fp.x, fp.y, sp.x, sp.y, fill="black", width=2)
 
 
+def get_if_approx_contains(inters, intersection):
+    for section in inters:
+        if big_approx_equals(section, intersection):
+            return section
+    return None
+
+
 def update_paint(event):
     global fp, sp, item
     sp.x, sp.y = event.x, event.y
@@ -33,8 +40,15 @@ def update_paint(event):
 
 
 def approx_equals(point1, point2):
-    if point1.x + 3 > point2.x and point2.x + 3 > point1.x:
-        if point1.y + 3 > point2.y and point2.y + 3 > point1.y:
+    if point1.x + 1 > point2.x and point2.x + 1 > point1.x:
+        if point1.y + 1 > point2.y and point2.y + 1 > point1.y:
+            return True
+    return False
+
+
+def big_approx_equals(point1, point2):
+    if point1.x + 5 > point2.x and point2.x + 5 > point1.x:
+        if point1.y + 5 > point2.y and point2.y + 5 > point1.y:
             return True
     return False
 
@@ -55,9 +69,10 @@ def check(event):
     for line in lines:  # find intersections with our line segment
         if do_lines_intersect(line, this_line):
             intersection = get_line_intersection(line, this_line)
+            intersection = A if big_approx_equals(intersection, A) else (B if big_approx_equals(intersection, B) else (C if big_approx_equals(intersection, A) else intersection))
             if line == lines[0]:
-                print("fp = %d, %d" % (fp.x, fp.y))
-                print("sp = %d, %d" % (sp.x, sp.y))
+                # print("fp = %d, %d" % (fp.x, fp.y))
+                # print("sp = %d, %d" % (sp.x, sp.y))
                 # print("item = " + str(item))
                 if not is_point_right_of_line(line, fp):
                     fp = intersection
@@ -65,8 +80,8 @@ def check(event):
                     sp = intersection
                 cv.coords(item, fp.x, fp.y, sp.x, sp.y)
             elif line == lines[1]:
-                print("fp = %d, %d" % (fp.x, fp.y))
-                print("sp = %d, %d" % (sp.x, sp.y))
+                # print("fp = %d, %d" % (fp.x, fp.y))
+                #print("sp = %d, %d" % (sp.x, sp.y))
                 # print("item = " + str(item))
                 if is_point_right_of_line(line, fp):
                     fp = intersection
@@ -74,8 +89,8 @@ def check(event):
                     sp = intersection
                 cv.coords(item, fp.x, fp.y, sp.x, sp.y)
             elif line == lines[2]:
-                print("fp = %d, %d" % (fp.x, fp.y))
-                print("sp = %d, %d" % (sp.x, sp.y))
+                # print("fp = %d, %d" % (fp.x, fp.y))
+                # print("sp = %d, %d" % (sp.x, sp.y))
 
                 # print("item = " + str(item))
                 if fp.y > intersection.y > sp.y:
@@ -86,9 +101,13 @@ def check(event):
                     sp.x = intersection.x
                     sp.y = intersection.y
                     cv.coords(item, fp.x, fp.y, sp.x, sp.y)
-            print(intersection.x, intersection.y)
-            if not intersections.__contains__(intersection):
-                intersections.append(intersection)
+            # print("before: " + str(intersection.x), str(intersection.y))
+            section = get_if_approx_contains(intersections, intersection)
+            # if not section:
+            #     intersections.append(intersection)
+            # else:
+            #     intersection = section
+            # print("after: " + str(intersection.x), str(intersection.y))
             if has_collided and not epsilon_equals(intersection, first_collision):  # if its the first occurrence, we can't make a line segment
                 segment = LineSegment(first_collision, intersection)  # make a line segment between current and first intersection
                 for other_line in lines:  # go through all of the lines and check what intersects with our current intersection
@@ -120,5 +139,4 @@ cv.create_line(A.x, A.y, B.x, B.y, C.x, C.y, A.x, A.y, fill="black", width=2)
 lines = [LineSegment(A, B), LineSegment(A, C), LineSegment(B, C)]
 intersections = [A, B, C]
 trinumber = 1
-
 root.mainloop()
